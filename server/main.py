@@ -1,8 +1,27 @@
 from fastapi import FastAPI
 from datetime import datetime
 from pydantic import BaseModel
+from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
+
+
+##### CORS Settings #####
+origins = [
+    "http://localhost.tiangolo.com",
+    "https://localhost.tiangolo.com",
+    "http://localhost",
+    "http://localhost:3000",
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["GET", "PUT", "POST", "DELETE"],
+    allow_headers=["*"],
+)
+
 
 ##### Data model for Buys #####
 class Buy(BaseModel):
@@ -23,14 +42,14 @@ class Sell(BaseModel):
 ##### Fake database to act as data until SQL server is setup #####
 fake_database = {
   "buys": {
-    1: {
+    0: {
       "name": "Bitcoin",
       "ticker": "BTC",
       "price_bought_for": 13450.55,
       "amount": 5.44,
       "datetime": "2022-09-15T15:53:00+05:00"
     },
-    2: {
+    1: {
       "name": "Ethereum",
       "ticker": "ETH",
       "price_bought_for": 2002.55,
@@ -39,14 +58,14 @@ fake_database = {
     }
   },
   "sells": {
-    1: {
+    0: {
       "name": "Bitcoin",
       "ticker": "BTC",
       "price_bought_for": 13450.55,
       "amount": 5.44,
       "datetime": "2022-10-01T15:53:00+05:00"
     },
-    2: {
+    1: {
       "name": "Ethereum",
       "ticker": "ETH",
       "price_bought_for": 2002.55,
@@ -55,6 +74,17 @@ fake_database = {
     }
   }
 }
+
+##### Get all buys #####
+@app.get('/user/buys')
+async def get_buys():
+  return fake_database["buys"]
+
+##### Get all sells #####
+@app.get('/user/sells')
+async def get_buys():
+  return fake_database["sells"]
+
 
 ##### Get an buy by item_id #####
 @app.get('/user/buy/{item_id}')
@@ -76,6 +106,7 @@ async def create_buy(investment: Buy):
     "ticker": investment.ticker,
     "price_bought_for": investment.price_bought_for,
     "amount": investment.amount,
+    "datetime": investment.datetime
   }
   return fake_database["buys"]
 
@@ -88,6 +119,7 @@ async def create_sell(investment: Sell):
     "ticker": investment.ticker,
     "price_bought_for": investment.price_sold_for,
     "amount": investment.amount,
+    "datetime": investment.datetime
   }
   return fake_database["sells"]
 
@@ -100,6 +132,7 @@ async def update_buy(item_id: int, investment: Buy):
     "ticker": investment.ticker,
     "price_bought_for": investment.price_bought_for,
     "amount": investment.amount,
+    "datetime": investment.datetime
   }
   return fake_database["buys"]
 
@@ -111,6 +144,7 @@ async def update_buy(item_id: int, investment: Sell):
     "ticker": investment.ticker,
     "price_bought_for": investment.price_sold_for,
     "amount": investment.amount,
+    "datetime": investment.datetime
   }
   return fake_database["sells"]
 
