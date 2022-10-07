@@ -5,6 +5,7 @@ import colours from "./colours";
 
 const MainLayout = styled.main`
   width: 100vw;
+  /* font-family: "Montserrat", sans-serif; */
   .top-bar {
     background-color: ${colours.mainBlue};
     width: calc(100% - 18vw);
