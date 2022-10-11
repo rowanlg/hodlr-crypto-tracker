@@ -22,10 +22,17 @@ const ButtonContainer = styled.div`
   }
 `;
 
-const Buttons = () => {
+const Buttons = ({
+  addModalShow,
+  setAddModalShow,
+  editModalShow,
+  setEditModalShow,
+  deleteModalShow,
+  setDeleteModalShow,
+}) => {
   return (
     <ButtonContainer>
-      <button>
+      <button onClick={() => setAddModalShow(true)}>
         <svg
           width="15"
           height="15"

@@ -6,6 +6,7 @@ import BTCPrice from "../components/InvestmentsPage/BTCPrice";
 import InvestmentList from "../components/InvestmentsPage/InvestmentList";
 import LatestInvestments from "../components/InvestmentsPage/LatestInvestments";
 import Buttons from "../components/InvestmentsPage/Buttons";
+import AddModal from "../components/InvestmentsPage/AddModal";
 
 const InvestmentPage = styled.div`
   display: grid;
@@ -44,6 +45,9 @@ const investments = () => {
   const [listOfCoins, setListOfCoins] = React.useState([]);
   const [loading, setLoading] = React.useState(false);
   const [listOfCoinPrices, setListOfCoinPrices] = React.useState({});
+  const [addModalShow, setAddModalShow] = React.useState(false);
+  const [editModalShow, setEditModalShow] = React.useState(false);
+  const [deleteModalShow, setDeleteModalShow] = React.useState(false);
 
   React.useEffect(() => {
     fetch("http://localhost:8000/user/buys")
@@ -69,39 +73,6 @@ const investments = () => {
     });
   }, [buysData]);
 
-  // React.useEffect(() => {
-  //   const urlIds = () => {
-  //     let urlString = "";
-  //     if (listOfCoins.length > 1) {
-  //       listOfCoins.map((coin, index) => {
-  //         if (index == 0) {
-  //           urlString += coin;
-  //         } else {
-  //           urlString += "%2C" + coin;
-  //         }
-  //       });
-  //     } else {
-  //       urlString = listOfCoins[0];
-  //     }
-  //     return urlString;
-  //   };
-  //   fetch(
-  //     `https://api.coingecko.com/api/v3/simple/price?ids=${urlIds()}&vs_currencies=gbp`
-  //   )
-  //     .then((res) => res.json())
-  //     .then((data) => {
-  //       setListOfCoinPrices(data);
-  //     })
-  //     .then(() => {
-  //       setLoading(false);
-  //     })
-  //     .catch((err) => console.log(err));
-
-  //   const timeout = setTimeout(() => {}, 5000);
-
-  //   return () => clearTimeout(timeout);
-  // }, [listOfCoins]);
-
   return (
     <Layout pageName="Investments">
       {loading ? null : (
@@ -120,7 +91,14 @@ const investments = () => {
             <h3>Investments</h3>
           </div>
           <div className="buttons">
-            <Buttons />
+            <Buttons
+              addModalShow={addModalShow}
+              setAddModalShow={setAddModalShow}
+              editModalShow={editModalShow}
+              setEditModalShow={setEditModalShow}
+              deleteModalShow={deleteModalShow}
+              setDeleteModalShow={setDeleteModalShow}
+            />
           </div>
           <InvestmentList
             buysData={buysData}
@@ -130,6 +108,7 @@ const investments = () => {
               gridArea: "investments-show",
             }}
           />
+          {addModalShow ? <AddModal setAddModalShow={setAddModalShow} /> : null}
         </InvestmentPage>
       )}
     </Layout>

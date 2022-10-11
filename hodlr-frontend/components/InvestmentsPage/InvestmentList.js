@@ -8,6 +8,7 @@ const InvestmentListSection = styled.div`
   padding: ${colours.padding};
   grid-row: span 5;
   grid-column: span 3;
+  overflow-y: scroll;
 
   .line-break {
     width: 100%;
