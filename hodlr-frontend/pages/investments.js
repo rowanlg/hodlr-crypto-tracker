@@ -44,10 +44,16 @@ const investments = () => {
   const [buysData, setBuysData] = React.useState({});
   const [listOfCoins, setListOfCoins] = React.useState([]);
   const [loading, setLoading] = React.useState(false);
-  const [listOfCoinPrices, setListOfCoinPrices] = React.useState({});
+  const [listOfCoinPrices, setListOfCoinPrices] = React.useState([]);
   const [addModalShow, setAddModalShow] = React.useState(false);
   const [editModalShow, setEditModalShow] = React.useState(false);
   const [deleteModalShow, setDeleteModalShow] = React.useState(false);
+
+  const updateCoinPrices = () => {
+    Object.values(buysData).map((item) => {
+      setListOfCoins((current) => [...current, item.name]);
+    });
+  };
 
   React.useEffect(() => {
     fetch("http://localhost:8000/user/buys")
@@ -56,22 +62,20 @@ const investments = () => {
         setBuysData(data);
       })
       .catch((err) => console.log(err));
+    updateCoinPrices();
+  }, []);
 
+  React.useEffect(() => {
+    updateCoinPrices();
     fetch("http://localhost:8000/user/prices")
       .then((res) => res.json())
       .then((data) => {
         setListOfCoinPrices(data);
       })
       .catch((err) => console.log(err));
-  }, []);
-
-  React.useEffect(() => {
-    Object.entries(buysData).map((item) => {
-      if (listOfCoins.length < Object.entries(buysData).length) {
-        setListOfCoins((current) => [...current, item[1].name]);
-      }
-    });
   }, [buysData]);
+
+  console.log(buysData);
 
   return (
     <Layout pageName="Investments">

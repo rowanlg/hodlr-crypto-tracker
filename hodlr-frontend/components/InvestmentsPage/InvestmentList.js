@@ -50,36 +50,57 @@ const InvestmentListSection = styled.div`
 const InvestmentList = ({ buysData, loading, listOfCoinPrices }) => {
   const [dateSortReversed, setDateSortReversed] = React.useState(false);
 
-  const listBuys = Object.entries(buysData).map((buy, index) => {
-    const localeOptions = {
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2,
-    };
-    const price_bought_for = buy[1].price_bought_for * buy[1].amount;
-    const price_current =
-      listOfCoinPrices[buy[1].name.toLowerCase()]?.gbp * buy[1].amount;
-    return (
-      <tr key={index}>
-        <td>{buy[1].datetime.slice(0, 10)}</td>
-        <td style={{ fontWeight: 500 }}>{buy[1].name}</td>
-        <td>{buy[1].ticker}</td>
-        <td>{buy[1].amount}</td>
-        <td>{buy[1].location}</td>
-        <td style={{ color: colours.orange }}>
-          £{price_bought_for.toLocaleString("en-GB", localeOptions)}
-        </td>
-        <td
-          style={{
-            color:
-              price_bought_for > price_current ? colours.red : colours.green,
-          }}
-        >
-          £{price_current.toLocaleString("en-GB", localeOptions)}
-        </td>
-      </tr>
-    );
-  });
+  const listBuys = Object.values(buysData)
+    .sort((a, b) => {
+      return dateSortReversed
+        ? a.datetime < b.datetime
+          ? -1
+          : a.datetime > b.datetime
+          ? 1
+          : 0
+        : b.datetime < a.datetime
+        ? -1
+        : b.datetime > a.datetime
+        ? 1
+        : 0;
+    })
+    .map((buy, index) => {
+      const localeOptions = {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+      };
+      const price_bought_for = buy.price_bought_for * buy.amount;
+      const price_current =
+        listOfCoinPrices[buy.name.toLowerCase()]?.gbp * buy.amount;
+      console.log(listOfCoinPrices);
+      return (
+        <tr key={index}>
+          <td>{buy.datetime.slice(0, 10)}</td>
+          <td style={{ fontWeight: 500 }}>{buy.name}</td>
+          <td>{buy.ticker}</td>
+          <td>{buy.amount}</td>
+          <td>{buy.location}</td>
+          <td style={{ color: colours.orange }}>
+            £{price_bought_for.toLocaleString("en-GB", localeOptions)}
+          </td>
+          <td
+            style={{
+              color:
+                price_bought_for > price_current ? colours.red : colours.green,
+            }}
+          >
+            £{price_current.toLocaleString("en-GB", localeOptions)}
+          </td>
+        </tr>
+      );
+    });
   // console.log(buysData);
+  // console.log(
+  //   "sorted",
+  //   Object.values(buysData).sort((a, b) => {
+  //     return b.datetime < a.datetime ? -1 : b.datetime > a.datetime ? 1 : 0;
+  //   })
+  // );
   return (
     <InvestmentListSection>
       <table>

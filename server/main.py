@@ -60,7 +60,7 @@ fake_database = {
       "ticker": "BTC",
       "price_bought_for": 13450.55,
       "amount": 5.44,
-      "datetime": "2022-09-15T15:53:00+05:00",
+      "datetime": "2021-09-15T15:53:00+05:00",
       "location": "Binance"
     },
     1: {
@@ -92,32 +92,7 @@ fake_database = {
   }
 }
 
-url_string = ""
-counter = 0
 
-for item in fake_database["buys"].items():
-  if (counter == 0):
-    url_string += item[1]['name'].lower()
-    counter += 1
-  elif (counter > 0):
-    url_string += "%2C" + item[1]['name'].lower()
-    counter += 1
-
-
-url = f'https://api.coingecko.com/api/v3/simple/price?ids={url_string}&vs_currencies=gbp'
-
-
-try:
-  response = requests.get(url, None)
-  data = json.loads(response.text)
-  print(data)
-except (ConnectionError, Timeout, TooManyRedirects) as e:
-  print(e)
-
-##### Get Prices of invested coins #####
-@app.get('/user/prices')
-async def get_prices():
-  return data
 
 ##### Get all buys #####
 @app.get('/user/buys')
@@ -209,7 +184,30 @@ async def delete_buy(item_id: int):
   del fake_database["sells"][item_id]
   return fake_database["sells"]
 
-##### Get all buys #####
-@app.get('/cmc_listings')
-async def get_listings():
+
+url_string = ""
+counter = 0
+
+for item in fake_database["buys"].items():
+  if (counter == 0):
+    url_string += item[1]['name'].lower()
+    counter += 1
+  elif (counter > 0):
+    url_string += "%2C" + item[1]['name'].lower()
+    counter += 1
+
+
+url = f'https://api.coingecko.com/api/v3/simple/price?ids={url_string}&vs_currencies=gbp'
+
+
+try:
+  response = requests.get(url, None)
+  data = json.loads(response.text)
+  print(data)
+except (ConnectionError, Timeout, TooManyRedirects) as e:
+  print(e)
+
+##### Get Prices of invested coins #####
+@app.get('/user/prices')
+async def get_prices():
   return data
