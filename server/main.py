@@ -1,14 +1,16 @@
-from fastapi import FastAPI
-from datetime import datetime
-from pydantic import BaseModel
+from typing import List
+import fastapi
+from fastapi import security
+
+from sqlalchemy import orm
 from fastapi.middleware.cors import CORSMiddleware
+import services, schemas
+
 import requests
 from requests.exceptions import ConnectionError, Timeout, TooManyRedirects
 import json
 
-
-app = FastAPI()
-
+app = fastapi.FastAPI()
 
 ##### CORS Settings #####
 origins = [
@@ -16,6 +18,7 @@ origins = [
     "https://localhost.tiangolo.com",
     "http://localhost",
     "http://localhost:3000",
+    "http://localhost:3000/login",
 ]
 
 app.add_middleware(
@@ -26,188 +29,150 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-##### Data model for User #####
-class User(BaseModel):
-  user_id: int
-  name: str
-  total_capital: float
-  investments: float
-  liquidity: float
 
-##### Data model for Buys #####
-class Buy(BaseModel):
-  name: str
-  ticker: str
-  price_bought_for: float
-  amount: float
-  datetime: datetime
-  location: str
+@app.on_event("startup")
+async def startup():
+    services.create_database()
 
-##### Data model for Sells #####
-class Sell(BaseModel):
-  name: str
-  ticker: str
-  price_sold_for: float
-  amount: float
-  datetime: datetime
-  location: str
+@app.post("/api/users")
+async def create_user(
+    user: schemas.UserCreate, db: orm.Session = fastapi.Depends(services.get_db)
+):
+    db_user = await services.get_user_by_email(user.email, db)
+    if db_user:
+        raise fastapi.HTTPException(status_code=400, detail="Email already in use")
 
-##### Fake database to act as data until SQL server is setup #####
-fake_database = {
-  "buys": {
-    0: {
-      "name": "Bitcoin",
-      "ticker": "BTC",
-      "price_bought_for": 13450.55,
-      "amount": 5.44,
-      "datetime": "2021-09-15T15:53:00+05:00",
-      "location": "Binance"
-    },
-    1: {
-      "name": "Ethereum",
-      "ticker": "ETH",
-      "price_bought_for": 1502.55,
-      "amount": 55.29,
-      "datetime": "2022-09-13T15:53:00+05:00",
-      "location": "Coinbase"
-    }
-  },
-  "sells": {
-    0: {
-      "name": "Bitcoin",
-      "ticker": "BTC",
-      "price_bought_for": 13450.55,
-      "amount": 5.44,
-      "datetime": "2022-10-01T15:53:00+05:00",
-      "location": "Binance"
-    },
-    1: {
-      "name": "Ethereum",
-      "ticker": "ETH",
-      "price_bought_for": 70000.55,
-      "amount": 55.29,
-      "datetime": "2022-10-01T15:53:00+05:00",
-      "location": "Coinbase"
-    }
-  }
-}
+    user = await services.create_user(user, db)
+
+    return await services.create_token(user)
 
 
+@app.post("/api/token")
+async def generate_token(
+    form_data: security.OAuth2PasswordRequestForm = fastapi.Depends(),
+    db: orm.Session = fastapi.Depends(services.get_db),
+):
+    user = await services.authenticate_user(form_data.username, form_data.password, db)
 
-##### Get all buys #####
-@app.get('/user/buys')
-async def get_buys():
-  return fake_database["buys"]
+    if not user:
+        raise fastapi.HTTPException(status_code=401, detail="Invalid Credentials")
 
-##### Get all sells #####
-@app.get('/user/sells')
-async def get_buys():
-  return fake_database["sells"]
-
-
-##### Get an buy by item_id #####
-@app.get('/user/buy/{item_id}')
-async def get_buy(item_id: int):
-  return fake_database["buys"][item_id]
-
-##### Get an sell by item_id #####
-@app.get('/user/sell/{item_id}')
-async def get_sell(item_id: int):
-  return fake_database["sells"][item_id]
+    return await services.create_token(user)
 
 
-##### Create a new buy #####
-@app.post('/user/buy')
-async def create_buy(investment: Buy):
-  new_id = len(fake_database["buys"].keys()) + 1
-  fake_database["buys"][new_id] = {
-    "name": investment.name,
-    "ticker": investment.ticker,
-    "price_bought_for": investment.price_bought_for,
-    "amount": investment.amount,
-    "datetime": investment.datetime,
-    "location": investment.location
-  }
-  return fake_database["buys"]
-
-##### Create a new sell #####
-@app.post('/user/sell')
-async def create_sell(investment: Sell):
-  new_id = len(fake_database["sells"].keys()) + 1
-  fake_database["sells"][new_id] = {
-    "name": investment.name,
-    "ticker": investment.ticker,
-    "price_bought_for": investment.price_sold_for,
-    "amount": investment.amount,
-    "datetime": investment.datetime,
-    "location": investment.location
-  }
-  return fake_database["sells"]
+@app.get("/api/users/me", response_model=schemas.User)
+async def get_user(user: schemas.User = fastapi.Depends(services.get_current_user)):
+    return user
 
 
-##### Update a buy by item_id #####
-@app.put('/user/buy/{item_id}')
-async def update_buy(item_id: int, investment: Buy):
-  fake_database["buys"][item_id] = {
-    "name": investment.name,
-    "ticker": investment.ticker,
-    "price_bought_for": investment.price_bought_for,
-    "amount": investment.amount,
-    "datetime": investment.datetime,
-    "location": investment.location
-  }
-  return fake_database["buys"]
-
-##### Update a sell by item_id #####
-@app.put('/user/sell/{item_id}')
-async def update_buy(item_id: int, investment: Sell):
-  fake_database["sells"][item_id] = {
-    "name": investment.name,
-    "ticker": investment.ticker,
-    "price_bought_for": investment.price_sold_for,
-    "amount": investment.amount,
-    "datetime": investment.datetime,
-    "location": investment.location
-  }
-  return fake_database["sells"]
+@app.post("/api/investment", response_model=schemas.Item)
+async def create_investment(
+    investment: schemas.ItemCreate,
+    user: schemas.User = fastapi.Depends(services.get_current_user),
+    db: orm.Session = fastapi.Depends(services.get_db),
+):
+    return await services.create_investment(user=user, db=db, investment=investment)
 
 
-##### Delete a buy by item_id #####
-@app.delete('/user/buy/{item_id}')
-async def delete_buy(item_id: int):
-  del fake_database["buys"][item_id]
-  return fake_database["buys"]
+@app.post("/api/coins_held", response_model=schemas.CoinsHeld)
+async def create_coin(
+    coins_held: schemas.CoinsHeldCreate,
+    user: schemas.User = fastapi.Depends(services.get_current_user),
+    db: orm.Session = fastapi.Depends(services.get_db),
+):
+    return await services.create_coin(user=user, db=db, coins_held=coins_held)
 
-##### Delete a sell by item_id #####
-@app.delete('/user/sell/{item_id}')
-async def delete_buy(item_id: int):
-  del fake_database["sells"][item_id]
-  return fake_database["sells"]
+@app.get("/api/investments", response_model=List[schemas.Item])
+async def get_investments(
+    user: schemas.User = fastapi.Depends(services.get_current_user),
+    db: orm.Session = fastapi.Depends(services.get_db),
+):
+    return await services.get_investments(user=user, db=db)
 
-
-url_string = ""
-counter = 0
-
-for item in fake_database["buys"].items():
-  if (counter == 0):
-    url_string += item[1]['name'].lower()
-    counter += 1
-  elif (counter > 0):
-    url_string += "%2C" + item[1]['name'].lower()
-    counter += 1
+@app.get("/api/coins_held", response_model=List[schemas.CoinsHeld])
+async def get_coins_held(
+    user: schemas.User = fastapi.Depends(services.get_current_user),
+    db: orm.Session = fastapi.Depends(services.get_db),
+):
+    return await services.get_coins_held(user=user, db=db)
 
 
-url = f'https://api.coingecko.com/api/v3/simple/price?ids={url_string}&vs_currencies=gbp'
+@app.get("/api/investments/{investment_id}", status_code=200)
+async def get_investments(
+    investment_id: int,
+    user: schemas.User = fastapi.Depends(services.get_current_user),
+    db: orm.Session = fastapi.Depends(services.get_db),
+):
+    return await services.get_investment(investment_id, user, db)
 
 
-try:
-  response = requests.get(url, None)
-  data = json.loads(response.text)
-  print(data)
-except (ConnectionError, Timeout, TooManyRedirects) as e:
-  print(e)
+@app.delete("/api/investment/{investment_id}", status_code=204)
+async def delete_investment(
+    investment_id: int,
+    user: schemas.User = fastapi.Depends(services.get_current_user),
+    db: orm.Session = fastapi.Depends(services.get_db),
+):
+    await services.delete_investment(investment_id, user, db)
+    return {"message", "Successfully Deleted"}
+
+
+@app.put("/api/investment/{investment_id}", status_code=200)
+async def update_investment(
+    investment_id: int,
+    investment: schemas.ItemCreate,
+    user: schemas.User = fastapi.Depends(services.get_current_user),
+    db: orm.Session = fastapi.Depends(services.get_db),
+):
+    await services.update_investment(investment_id, investment, user, db)
+    return {"message", "Successfully Updated"}
+
+@app.put("/api/coins_held/{coin_name}", status_code=200)
+async def update_coin(
+    coin_name: str,
+    coins_held: schemas.CoinsHeldCreate,
+    user: schemas.User = fastapi.Depends(services.get_current_user),
+    db: orm.Session = fastapi.Depends(services.get_db),
+):
+    await services.update_coin(coin_name, coins_held, user, db)
+    return {"message", "Successfully Updated"}
+
+
+@app.get("/api")
+async def root():
+    return {"message": "Hodlr Crypto Tracker"}
+
 
 ##### Get Prices of invested coins #####
-@app.get('/user/prices')
-async def get_prices():
-  return data
+@app.get('/api/prices')
+async def get_prices(
+    user: schemas.User = fastapi.Depends(services.get_current_user),
+    db: orm.Session = fastapi.Depends(services.get_db),
+):
+    url_string = ""
+    counter = 0
+    coins_held = await services.get_coins_held(user=user, db=db)
+
+    # print(coins_held)
+
+    for item in coins_held:
+        if (counter == 0):
+            url_string += item.name.lower()
+            counter += 1
+        elif (counter > 0):
+            url_string += "%2C" + item.name.lower()
+            counter += 1
+
+
+    print(url_string)
+
+    url = f'https://api.coingecko.com/api/v3/simple/price?ids={url_string}&vs_currencies=gbp&include_24hr_change=true'
+
+    try:
+        response = requests.get(url, None)
+        data = json.loads(response.text)
+        print(data)
+    except (ConnectionError, Timeout, TooManyRedirects) as e:
+        print(e)
+
+    return data
+

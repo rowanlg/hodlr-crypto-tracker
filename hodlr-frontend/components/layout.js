@@ -2,6 +2,8 @@ import React from "react";
 import Link from "next/link";
 import styled from "styled-components";
 import colours from "./colours";
+import { UserContext } from "../context/UserContext";
+import { useRouter } from "next/router";
 
 const MainLayout = styled.main`
   width: 100vw;
@@ -55,7 +57,14 @@ const MainLayout = styled.main`
       }
 
       .account-info {
-        border: 1px solid purple;
+        /* border: 1px solid purple; */
+        button {
+          background-color: ${colours.darkBlue};
+          border: none;
+          padding: 7px 13px;
+          border-radius: 5px;
+          cursor: pointer;
+        }
       }
     }
   }
@@ -119,6 +128,9 @@ const MainLayout = styled.main`
 
 export default function Layout({ children, pageName }) {
   const [searchFocus, setSearchFocus] = React.useState(false);
+  const [token, setToken] = React.useContext(UserContext);
+  const router = useRouter();
+
   return (
     <MainLayout>
       <div className="top-bar">
@@ -147,7 +159,17 @@ export default function Layout({ children, pageName }) {
               onBlur={() => setSearchFocus(false)}
             />
           </div>
-          <div className="account-info">user1</div>
+          <div className="account-info">
+            <button
+              onClick={() => {
+                localStorage.setItem("usertoken", null);
+                setToken(null);
+                router.push("/login");
+              }}
+            >
+              Log Out
+            </button>
+          </div>
         </div>
       </div>
       <div className="side-bar">
@@ -156,7 +178,7 @@ export default function Layout({ children, pageName }) {
             hodlr<span style={{ color: colours.green }}>.</span>
           </h1>
           <ul>
-            <li
+            {/* <li
               style={{
                 backgroundColor:
                   pageName == "Dashboard" ? colours.darkBlue : colours.mainBlue,
@@ -228,7 +250,7 @@ export default function Layout({ children, pageName }) {
                   </p>
                 </a>
               </Link>
-            </li>
+            </li> */}
             <li
               style={{
                 backgroundColor:

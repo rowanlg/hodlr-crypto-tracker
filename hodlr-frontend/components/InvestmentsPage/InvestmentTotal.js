@@ -1,24 +1,51 @@
 import React from "react";
 import SmallWidget from "../SmallWidget";
 
-const InvestmentTotal = ({ buysData }) => {
+// item.amount *
+//         listOfCoinPrices[item.name.toLowerCase()].gbp *
+//         (listOfCoinPrices[item.name.toLowerCase()].gbp_24h_change / 100);
+
+const InvestmentTotal = ({ listOfCoins, listOfCoinPrices, buysData }) => {
   const getBuysTotal = () => {
     let counter = 0;
-    Object.entries(buysData).map((item) => {
-      counter += buysData[item[0]].amount * buysData[item[0]].price_bought_for;
-    });
-    return Math.round((counter + Number.EPSILON) * 100) / 100;
-  };
+    let percentageIncrease = [];
+    let previousTotal = 0;
 
-  const lastMonth =
-    Math.round((getBuysTotal() * 0.3 + Number.EPSILON) * 100) / 100;
+    // Get total investment amount and percentage change for each coin
+    listOfCoins.map((item) => {
+      let coinTotal = listOfCoinPrices[item.name.toLowerCase()]
+        ? item.amount * listOfCoinPrices[item.name.toLowerCase()].gbp
+        : 0;
+      let percentChange = listOfCoinPrices[item.name.toLowerCase()]
+        ? listOfCoinPrices[item.name.toLowerCase()].gbp_24h_change / 100
+        : 0;
+      counter += coinTotal;
+      percentageIncrease.push(coinTotal * (1 - percentChange));
+    });
+
+    // Add together previous totals for coins
+    percentageIncrease.map((prev) => {
+      previousTotal += prev;
+    });
+
+    return {
+      total: Math.round((counter + Number.EPSILON) * 100) / 100,
+      // Generate percentage change for total from coins prev amounts
+      percent: (1 - previousTotal / counter) * 100,
+      previous24hr: Number(previousTotal.toFixed(2)),
+    };
+  };
+  console.log("skjslkjshlksjhs ", listOfCoinPrices);
+
+  // const lastMonth = getBuysTotal().previous24hr;
+  console.log("lastmonth: ", getBuysTotal().previous24hr);
 
   return (
     <SmallWidget
       name="Investments"
-      figure={getBuysTotal().toLocaleString("en-GB")}
-      percentageDiff={0.3}
-      lastMonth={lastMonth.toLocaleString("en-GB")}
+      figure={getBuysTotal().total.toLocaleString("en-GB")}
+      percentageDiff={getBuysTotal().percent.toLocaleString("en-GB")}
+      lastMonth={getBuysTotal().previous24hr.toLocaleString("en-GB")}
     />
   );
 };

@@ -46,7 +46,7 @@ const Buttons = ({
           />
         </svg>
       </button>
-      <button>
+      <button onClick={() => setEditModalShow(true)}>
         <svg
           width="17"
           height="17"
@@ -60,7 +60,7 @@ const Buttons = ({
           />
         </svg>
       </button>
-      <button>
+      <button onClick={() => setDeleteModalShow(true)}>
         <svg
           width="18"
           height="17"

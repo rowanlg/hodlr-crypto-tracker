@@ -1,5 +1,6 @@
 import React from "react";
 import styled from "styled-components";
+import { UserContext } from "../../context/UserContext";
 import colours from "../colours";
 
 const InvestmentListSection = styled.div`
@@ -37,9 +38,10 @@ const InvestmentListSection = styled.div`
           text-align: left;
           font-size: 0.9rem;
           svg {
-            margin-left: 5px;
-            margin-bottom: 1px;
+            margin-left: 3px;
+            /* margin-bottom: 1px; */
             cursor: pointer;
+            width: 11px;
           }
         }
       }
@@ -49,58 +51,119 @@ const InvestmentListSection = styled.div`
 
 const InvestmentList = ({ buysData, loading, listOfCoinPrices }) => {
   const [dateSortReversed, setDateSortReversed] = React.useState(false);
+  // const [token] = React.useContext(UserContext);
 
-  const listBuys = Object.values(buysData)
-    .sort((a, b) => {
-      return dateSortReversed
-        ? a.datetime < b.datetime
-          ? -1
-          : a.datetime > b.datetime
-          ? 1
-          : 0
-        : b.datetime < a.datetime
-        ? -1
-        : b.datetime > a.datetime
-        ? 1
-        : 0;
-    })
-    .map((buy, index) => {
+  // const listBuys = buysData
+  //   .sort((a, b) => {
+  //     return dateSortReversed
+  //       ? a.datetime < b.datetime
+  //         ? -1
+  //         : a.datetime > b.datetime
+  //         ? 1
+  //         : 0
+  //       : b.datetime < a.datetime
+  //       ? -1
+  //       : b.datetime > a.datetime
+  //       ? 1
+  //       : 0;
+  //   })
+  //   .map((buy, index) => {
+  //     const localeOptions = {
+  //       minimumFractionDigits: 2,
+  //       maximumFractionDigits: 2,
+  //     };
+  //     // const price_bought_for = buy.price_bought_for * buy.amount;
+  //     // const price_current =
+  //     // listOfCoinPrices[buy.name.toLowerCase()]?.gbp * buy.amount;
+  //     // console.log(listOfCoinPrices);
+  //     return (
+  //       <tr key={index}>
+  //         <td>{buy.datetime.slice(0, 10)}</td>
+  //         <td style={{ fontWeight: 500 }}>{buy.name}</td>
+  //         <td>{buy.ticker}</td>
+  //         <td>{buy.amount}</td>
+  //         <td>{buy.location}</td>
+  //         <td style={{ color: colours.orange }}>
+  //           {/* £{price_bought_for.toLocaleString("en-GB", localeOptions)} */}
+  //         </td>
+  //         <td
+  //         // style={{
+  //         //   color:
+  //         //     price_bought_for > price_current ? colours.red : colours.green,
+  //         // }}
+  //         >
+  //           {/* £{price_current.toLocaleString("en-GB", localeOptions)} */}
+  //         </td>
+  //       </tr>
+  //     );
+  //   });
+
+  // console.log(buysData);
+  // console.log(
+  //   "sorted",
+  //   buysData
+  //     .sort((a, b) => {
+  //       // return dateSortReversed
+  //       //   ? a.datetime < b.datetime
+  //       //     ? -1
+  //       //     : a.datetime > b.datetime
+  //       //     ? 1
+  //       //     : 0
+  //       //   : b.datetime < a.datetime
+  //       //   ? -1
+  //       //   : b.datetime > a.datetime
+  //       //   ? 1
+  //       //   : 0;
+  //       a.datetime < b.datetime ? -1 : a.datetime > b.datetime ? 1 : 0;
+  //     })
+  //     .map((item) => {
+  //       return item.type;
+  //     })
+  // );
+
+  const listBuys = buysData
+    .filter((obj) => obj.type == "buy")
+    .map((item, index) => {
+      function capitalize(string) {
+        return string.charAt(0).toUpperCase() + string.substring(1);
+      }
       const localeOptions = {
         minimumFractionDigits: 2,
         maximumFractionDigits: 2,
       };
-      const price_bought_for = buy.price_bought_for * buy.amount;
-      const price_current =
-        listOfCoinPrices[buy.name.toLowerCase()]?.gbp * buy.amount;
-      console.log(listOfCoinPrices);
+      let coinTotal = listOfCoinPrices[item.name.toLowerCase()]
+        ? item.amount * listOfCoinPrices[item.name.toLowerCase()].gbp
+        : 0;
       return (
         <tr key={index}>
-          <td>{buy.datetime.slice(0, 10)}</td>
-          <td style={{ fontWeight: 500 }}>{buy.name}</td>
-          <td>{buy.ticker}</td>
-          <td>{buy.amount}</td>
-          <td>{buy.location}</td>
-          <td style={{ color: colours.orange }}>
-            £{price_bought_for.toLocaleString("en-GB", localeOptions)}
+          <td>{item.datetime.slice(0, 10)}</td>
+          <td style={{ fontWeight: 500 }}>{capitalize(item.name)}</td>
+          <td>{item.ticker.toUpperCase()}</td>
+          <td>{item.amount}</td>
+          <td style={{ color: colours.deactivatedWhite }}>
+            {capitalize(item.location)}
           </td>
+
+          <td style={{ color: colours.orange }}>
+            £{item.price_bought_for.toLocaleString("en-GB", localeOptions)}
+          </td>
+
           <td
             style={{
-              color:
-                price_bought_for > price_current ? colours.red : colours.green,
+              color: coinTotal
+                ? coinTotal > item.price_bought_for
+                  ? colours.green
+                  : colours.red
+                : colours.orange,
             }}
           >
-            £{price_current.toLocaleString("en-GB", localeOptions)}
+            {coinTotal
+              ? "£" + coinTotal.toLocaleString("en-GB", localeOptions)
+              : "N/A"}
           </td>
         </tr>
       );
     });
-  // console.log(buysData);
-  // console.log(
-  //   "sorted",
-  //   Object.values(buysData).sort((a, b) => {
-  //     return b.datetime < a.datetime ? -1 : b.datetime > a.datetime ? 1 : 0;
-  //   })
-  // );
   return (
     <InvestmentListSection>
       <table>

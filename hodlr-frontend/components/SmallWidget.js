@@ -15,7 +15,6 @@ const SmallWidgetSection = styled.div`
     justify-content: center;
     align-items: flex-start;
     h4 {
-      font-size: 1.2rem;
       font-weight: 500;
     }
     p.price {
@@ -55,7 +54,7 @@ const SmallWidget = ({ name, figure, percentageDiff, lastMonth }) => {
           </span>
         </p>
         {lastMonth ? (
-          <p className="bottom-text">Compared to £{lastMonth} (Last Month)</p>
+          <p className="bottom-text">Compared to £{lastMonth} (24h)</p>
         ) : null}
       </div>
     </SmallWidgetSection>
