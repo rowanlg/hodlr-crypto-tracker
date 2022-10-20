@@ -53,6 +53,7 @@ const MarketCapPercentages = () => {
     (item, index) => {
       return (
         <tr
+          key={index}
           style={{
             borderBottom:
               index !== Object.entries(marketCapPercentages).length - 1
