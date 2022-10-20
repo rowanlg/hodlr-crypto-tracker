@@ -135,7 +135,7 @@ async def update_investment(investment_id: int, item: schemas.ItemCreate, user: 
     investment_db.ticker = item.ticker
     investment_db.price_bought_for = item.price_bought_for
     investment_db.amount = item.amount
-    investment_db.datetime = datetime.gmtnow()
+    investment_db.datetime = item.datetime
     investment_db.location = item.location
 
     db.commit()

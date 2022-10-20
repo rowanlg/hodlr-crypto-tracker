@@ -23,7 +23,7 @@ const DeleteContainer = styled.div`
 `;
 
 const DeleteModalContent = ({ buysData, setDeleteModalShow, listOfCoins }) => {
-  const [transactionId, setTransactionId] = React.useState({});
+  const [transactionId, setTransactionId] = React.useState(null);
   const [confirmShow, setConfirmShow] = React.useState(false);
   const [token] = React.useContext(UserContext);
 
@@ -52,7 +52,7 @@ const DeleteModalContent = ({ buysData, setDeleteModalShow, listOfCoins }) => {
       }),
     };
     fetch(
-      `http://localhost:8000/api/investment/${buysData[transactionId].id}`,
+      process.env.SERVER_URL + `/api/investment/${buysData[transactionId].id}`,
       deleteOptions
     )
       .then((res) => res.json())
@@ -62,7 +62,8 @@ const DeleteModalContent = ({ buysData, setDeleteModalShow, listOfCoins }) => {
       .catch((err) => console.log(err));
 
     fetch(
-      `http://localhost:8000/api/coins_held/${buysData[transactionId].name}`,
+      process.env.SERVER_URL +
+        `/api/coins_held/${buysData[transactionId].name}`,
       putOptions
     )
       .then((res) => res.json())
@@ -73,7 +74,7 @@ const DeleteModalContent = ({ buysData, setDeleteModalShow, listOfCoins }) => {
 
     window.location.reload();
   }
-  console.log(listOfCoins);
+  // console.log(listOfCoins);
   const transactions = buysData.map((transaction, index) => {
     return (
       <option key={index} value={index}>
@@ -82,7 +83,7 @@ const DeleteModalContent = ({ buysData, setDeleteModalShow, listOfCoins }) => {
       </option>
     );
   });
-  console.log("data", buysData[transactionId]);
+  // console.log("data", buysData[transactionId]);
   return (
     <DeleteContainer>
       {!confirmShow ? (

@@ -26,9 +26,10 @@ const MainLayout = styled.main`
     .right-section {
       /* border: 1px solid yellow; */
       display: flex;
-      justify-content: space-around;
+      justify-content: flex-end;
       align-items: center;
       width: 65%;
+      padding-right: 30px;
       .search-section {
         display: flex;
         align-items: center;
@@ -134,11 +135,9 @@ export default function Layout({ children, pageName }) {
   return (
     <MainLayout>
       <div className="top-bar">
-        <div className="left-section">
-          <h2>{pageName}</h2>
-        </div>
+        <div className="left-section">{/* <h2>{pageName}</h2> */}</div>
         <div className="right-section">
-          <div className="search-section">
+          {/* <div className="search-section">
             <svg
               width="25"
               height="26"
@@ -158,7 +157,7 @@ export default function Layout({ children, pageName }) {
               onFocus={() => setSearchFocus(true)}
               onBlur={() => setSearchFocus(false)}
             />
-          </div>
+          </div> */}
           <div className="account-info">
             <button
               onClick={() => {
@@ -329,9 +328,7 @@ export default function Layout({ children, pageName }) {
             </li>
           </ul>
         </div>
-        <div>
-          <p>Dark Mode</p>
-        </div>
+        <div>{/* <p>Dark Mode</p> */}</div>
       </div>
       <div className="main-content">{children}</div>
     </MainLayout>

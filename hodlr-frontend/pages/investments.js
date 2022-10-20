@@ -3,6 +3,7 @@ import Layout from "../components/Layout";
 import styled from "styled-components";
 import InvestmentTotal from "../components/InvestmentsPage/InvestmentTotal";
 import BTCPrice from "../components/InvestmentsPage/BTCPrice";
+import ETHPrice from "../components/InvestmentsPage/ETHPrice";
 import InvestmentList from "../components/InvestmentsPage/InvestmentList";
 import LatestTransactions from "../components/InvestmentsPage/LatestTransactions";
 import Buttons from "../components/InvestmentsPage/Buttons";
@@ -17,7 +18,7 @@ const InvestmentPage = styled.div`
   gap: 30px 30px;
   padding: 30px;
   grid-template-areas:
-    "investment-total liquidity btc-price latest-investments"
+    "investment-total btc-price eth-price latest-investments"
     "title buttons buttons latest-investments"
     "investments-show investments-show investments-show latest-investments"
     "investments-show investments-show investments-show latest-investments"
@@ -65,11 +66,11 @@ const investments = () => {
         Authorization: "Bearer " + token,
       },
     };
-    fetch("http://localhost:8000/api/investments", investmentsOptions)
+    fetch(process.env.SERVER_URL + "/api/investments", investmentsOptions)
       .then((res) => res.json())
       .then((data) => {
         setBuysData(data);
-        console.log(data);
+        // console.log(data);
       })
       .catch((err) => console.log(err));
 
@@ -80,37 +81,25 @@ const investments = () => {
         Authorization: "Bearer " + token,
       },
     };
-    fetch("http://localhost:8000/api/coins_held", coinsOptions)
+    fetch(process.env.SERVER_URL + "/api/coins_held", coinsOptions)
       .then((res) => res.json())
       .then((data) => {
         setListOfCoins(data);
-        console.log(data);
+        // console.log(data);
       })
       .catch((err) => console.log(err));
 
-    fetch("http://localhost:8000/api/prices", coinsOptions)
+    fetch(process.env.SERVER_URL + "/api/prices", coinsOptions)
       .then((res) => res.json())
       .then((data) => {
         setListOfCoinPrices(data);
-        console.log(data);
+        // console.log(data);
       })
       .then(() => {
         setLoading(false);
       })
       .catch((err) => console.log(err));
   }, []);
-
-  // React.useEffect(() => {
-  //   updateCoinPrices();
-  //   fetch("http://localhost:8000/user/prices")
-  //     .then((res) => res.json())
-  //     .then((data) => {
-  //       setListOfCoinPrices(data);
-  //     })
-  //     .catch((err) => console.log(err));
-  // }, [buysData]);
-
-  console.log(buysData);
 
   return (
     <Layout pageName="Investments">
@@ -122,14 +111,8 @@ const investments = () => {
             buysData={buysData}
             style={{ gridArea: "investment-total" }}
           />
-          <InvestmentTotal
-            listOfCoins={listOfCoins}
-            listOfCoinPrices={listOfCoinPrices}
-            buysData={buysData}
-            style={{ gridArea: "liquidity" }}
-          />
-
           <BTCPrice style={{ gridArea: "btc-price" }} />
+          <ETHPrice style={{ gridArea: "eth-price" }} />
 
           <LatestTransactions
             buysData={buysData}

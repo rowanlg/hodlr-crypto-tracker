@@ -62,7 +62,7 @@ export default function Page() {
         Authorization: "Bearer " + token,
       },
     };
-    fetch(`http://localhost:8000/api/users/me`, options)
+    fetch(process.env.SERVER_URL + `/api/users/me`, options)
       .then((res) => res.json())
       .then((data) => {
         console.log(data);

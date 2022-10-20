@@ -63,7 +63,7 @@ const Register = () => {
     };
 
     const response = await fetch(
-      "http://localhost:8000/api/users",
+      process.env.SERVER_URL + "/api/users",
       requestOptions
     );
     const data = await response.json();
@@ -139,7 +139,6 @@ const Register = () => {
           >
             Login
           </button>
-          <p>Demo: johndoe secret</p>
         </form>
       </div>
     </RegisterContainer>

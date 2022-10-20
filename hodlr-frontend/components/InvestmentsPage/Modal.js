@@ -3,6 +3,7 @@ import styled from "styled-components";
 import colours from "../colours";
 import { UserContext } from "../../context/UserContext";
 import AddModalContent from "./Modal/AddModalContent";
+import EditModalContent from "./Modal/EditModalContent";
 import DeleteModalContent from "./Modal/DeleteModalContent";
 
 const AddModalContainer = styled.div`
@@ -194,7 +195,14 @@ const Modal = ({
             token={token}
             setAddModalShow={setAddModalShow}
           />
-        ) : editModalShow ? null : (
+        ) : editModalShow ? (
+          <EditModalContent
+            listOfCoins={listOfCoins}
+            token={token}
+            setEditModalShow={setEditModalShow}
+            buysData={buysData}
+          />
+        ) : (
           <DeleteModalContent
             buysData={buysData}
             setDeleteModalShow={setDeleteModalShow}

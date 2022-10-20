@@ -2,77 +2,6 @@ import React from "react";
 import styled from "styled-components";
 import colours from "../../colours";
 
-const AddModalContainer = styled.div`
-  position: absolute;
-  left: 0;
-  top: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.4);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  div.content {
-    width: calc(60% - 60px);
-    text-align: center;
-    z-index: 1;
-    background-color: ${colours.mainBlue};
-    padding: ${colours.padding};
-    border-radius: ${colours.borderRadius};
-    position: relative;
-    .error-message {
-      font-size: 0.6rem;
-      span {
-        color: ${colours.green};
-        text-decoration: underline;
-        cursor: pointer;
-      }
-    }
-    .exit {
-      position: absolute;
-      top: 20px;
-      right: 20px;
-      cursor: pointer;
-    }
-
-    form {
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      input.save {
-        margin: 10px;
-        background-color: ${colours.darkBlue};
-        border: none;
-        padding: 5px 15px;
-        border-radius: 5px;
-        cursor: pointer;
-      }
-      div {
-        display: flex;
-        flex-direction: row;
-        justify-content: center;
-        align-items: flex-start;
-        label {
-          display: flex;
-          flex-direction: column;
-          justify-content: center;
-          align-items: flex-start;
-          margin: 10px;
-          font-size: 0.8rem;
-          input {
-            margin: 5px 0;
-            width: 170px;
-            background-color: inherit;
-            border: none;
-            border-bottom: 1px solid ${colours.veryDeactivated};
-          }
-        }
-      }
-    }
-  }
-`;
-
 const AddModalContent = ({ token, listOfCoins, setAddModalShow }) => {
   const [addData, setAddData] = React.useState({
     type: "buy",
@@ -160,15 +89,16 @@ const AddModalContent = ({ token, listOfCoins, setAddModalShow }) => {
       }),
     };
 
-    fetch(`http://localhost:8000/api/investment`, investmentOptions)
+    fetch(process.env.SERVER_URL + `/api/investment`, investmentOptions)
       .then((res) => res.json())
       .then((data) => console.log(data))
       .catch((err) => console.log(err));
 
     fetch(
-      `http://localhost:8000/api/coins_held${
-        listOfCoinNames.includes(addData.name) ? "/" + addData.name : ""
-      }`,
+      process.env.SERVER_URL +
+        `/api/coins_held${
+          listOfCoinNames.includes(addData.name) ? "/" + addData.name : ""
+        }`,
       coinOptions
     )
       .then((res) => res.json())
@@ -223,8 +153,8 @@ const AddModalContent = ({ token, listOfCoins, setAddModalShow }) => {
             <h5>Type</h5>
             <label>
               <select
-                name="languages"
-                id="lang"
+                name="type"
+                id="type"
                 onChange={(e) =>
                   setAddData((prev) => ({ ...prev, type: e.target.value }))
                 }

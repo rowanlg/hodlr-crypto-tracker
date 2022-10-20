@@ -35,10 +35,10 @@ const InvestmentTotal = ({ listOfCoins, listOfCoinPrices, buysData }) => {
       previous24hr: Number(previousTotal.toFixed(2)),
     };
   };
-  console.log("skjslkjshlksjhs ", listOfCoinPrices);
+  // console.log("skjslkjshlksjhs ", listOfCoinPrices);
 
   // const lastMonth = getBuysTotal().previous24hr;
-  console.log("lastmonth: ", getBuysTotal().previous24hr);
+  // console.log("lastmonth: ", getBuysTotal().previous24hr);
 
   return (
     <SmallWidget

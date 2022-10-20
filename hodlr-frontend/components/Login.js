@@ -71,7 +71,7 @@ const Login = () => {
     };
 
     const response = await fetch(
-      "http://localhost:8000/api/token",
+      process.env.SERVER_URL + "/api/token",
       requestOptions
     );
     const data = await response.json();
@@ -100,7 +100,6 @@ const Login = () => {
       setLoginDetails({});
     }
   }, [autofill]);
-
   return (
     <LoginContainer>
       <div className="container">

@@ -137,7 +137,7 @@ async def update_coin(
     return {"message", "Successfully Updated"}
 
 
-@app.get("/api")
+@app.get("/")
 async def root():
     return {"message": "Hodlr Crypto Tracker"}
 
