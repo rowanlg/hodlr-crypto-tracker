@@ -21,7 +21,7 @@ const LoginRegisterContainer = styled.div`
   }
 `;
 
-const login = () => {
+const Login = () => {
   return (
     <LoginRegisterContainer>
       <div className="center">
@@ -32,4 +32,4 @@ const login = () => {
   );
 };
 
-export default login;
+export default Login;

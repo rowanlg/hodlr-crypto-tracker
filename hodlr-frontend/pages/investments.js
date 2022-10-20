@@ -42,7 +42,7 @@ const InvestmentPage = styled.div`
   }
 `;
 
-const investments = () => {
+const Investments = () => {
   const [buysData, setBuysData] = React.useState({});
   const [listOfCoins, setListOfCoins] = React.useState([]);
   const [loading, setLoading] = React.useState(true);
@@ -160,4 +160,4 @@ const investments = () => {
   );
 };
 
-export default investments;
+export default Investments;

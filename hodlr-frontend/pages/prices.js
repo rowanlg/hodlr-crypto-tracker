@@ -33,7 +33,7 @@ const PricesContainer = styled.div`
   }
 `;
 
-const prices = () => {
+const Prices = () => {
   return (
     <Layout pageName="Prices">
       <PricesContainer>
@@ -48,4 +48,4 @@ const prices = () => {
   );
 };
 
-export default prices;
+export default Prices;
