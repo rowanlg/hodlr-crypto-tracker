@@ -5,12 +5,11 @@ const nextConfig = {
   env: {
     SERVER_URL: process.env.SERVER_URL,
   },
-  async redirects() {
+  async rewrites() {
     return [
       {
         source: "/api/token",
-        destination: process.env.SERVER_URL + "/api/token",
-        permanent: true,
+        destination: "https://hodlr-tracker.herokuapp.com/api/token",
       },
     ];
   },
