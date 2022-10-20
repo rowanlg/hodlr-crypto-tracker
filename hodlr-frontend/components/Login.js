@@ -3,7 +3,6 @@ import styled from "styled-components";
 import colours from "../components/colours";
 import { UserContext } from "../context/UserContext";
 import { useRouter } from "next/router";
-import { Token } from "nft.storage";
 
 const LoginContainer = styled.div`
   /* width: 50%; */
