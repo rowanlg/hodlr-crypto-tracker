@@ -1,5 +1,5 @@
 import React from "react";
-import Layout from "../components/Layout";
+import Layout from "../layout/Layout";
 import styled from "styled-components";
 import colours from "../components/colours";
 import Trending from "../components/PricesPage/Trending";

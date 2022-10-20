@@ -1,7 +1,7 @@
 import React from "react";
 import Link from "next/link";
 import styled from "styled-components";
-import colours from "./colours";
+import colours from "../components/colours";
 import { UserContext } from "../context/UserContext";
 import { useRouter } from "next/router";
 

@@ -1,5 +1,5 @@
 import React from "react";
-import Layout from "../components/Layout";
+import Layout from "../layout/Layout";
 import styled from "styled-components";
 import InvestmentTotal from "../components/InvestmentsPage/InvestmentTotal";
 import BTCPrice from "../components/InvestmentsPage/BTCPrice";

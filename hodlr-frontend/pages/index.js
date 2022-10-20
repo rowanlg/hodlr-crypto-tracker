@@ -3,7 +3,7 @@ import { useRouter } from "next/router";
 import { UserContext } from "../context/UserContext";
 // import Link from "next/link";
 import styled from "styled-components";
-import Layout from "../components/Layout";
+import Layout from "../layout/Layout";
 import Head from "next/head";
 import Image from "next/image";
 import styles from "../styles/Home.module.css";
