@@ -8,8 +8,8 @@ const nextConfig = {
   async rewrites() {
     return [
       {
-        source: "/api/token",
-        destination: "https://hodlr-tracker.herokuapp.com/api/token",
+        source: "/api",
+        destination: "https://hodlr-tracker.herokuapp.com/api",
       },
     ];
   },

@@ -66,7 +66,7 @@ const InvestmentsPage = () => {
         Authorization: "Bearer " + token,
       },
     };
-    fetch(process.env.SERVER_URL + "/api/investments", investmentsOptions)
+    fetch("/api/investments", investmentsOptions)
       .then((res) => res.json())
       .then((data) => {
         setBuysData(data);
