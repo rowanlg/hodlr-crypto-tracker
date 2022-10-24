@@ -2,6 +2,35 @@ import React from "react";
 import styled from "styled-components";
 import colours from "./colours";
 
+const SmallWidget = ({ name, figure, percentageDiff, prevPrice }) => {
+  return (
+    <SmallWidgetSection>
+      <div className="content">
+        <h4>{name}</h4>
+        <p
+          className="price"
+          style={
+            percentageDiff > 0
+              ? { color: colours.green }
+              : { color: colours.red }
+          }
+        >
+          £{figure}
+          <span>
+            {" "}
+            {percentageDiff > 0 ? "+" + percentageDiff : percentageDiff}%
+          </span>
+        </p>
+        {prevPrice ? (
+          <p className="bottom-text">Compared to £{prevPrice} (24h)</p>
+        ) : null}
+      </div>
+    </SmallWidgetSection>
+  );
+};
+
+export default SmallWidget;
+
 const SmallWidgetSection = styled.div`
   height: 100%;
   width: 100%;
@@ -33,32 +62,3 @@ const SmallWidgetSection = styled.div`
     }
   }
 `;
-
-const SmallWidget = ({ name, figure, percentageDiff, lastMonth }) => {
-  return (
-    <SmallWidgetSection>
-      <div className="content">
-        <h4>{name}</h4>
-        <p
-          className="price"
-          style={
-            percentageDiff > 0
-              ? { color: colours.green }
-              : { color: colours.red }
-          }
-        >
-          £{figure}
-          <span>
-            {" "}
-            {percentageDiff > 0 ? "+" + percentageDiff : percentageDiff}%
-          </span>
-        </p>
-        {lastMonth ? (
-          <p className="bottom-text">Compared to £{lastMonth} (24h)</p>
-        ) : null}
-      </div>
-    </SmallWidgetSection>
-  );
-};
-
-export default SmallWidget;

@@ -3,9 +3,108 @@ import styled from "styled-components";
 import colours from "../components/colours";
 import { UserContext } from "../context/UserContext";
 
+const Register = () => {
+  const [registerDetails, setRegisterDetails] = React.useState({
+    email: "",
+    password: "",
+  });
+  const [errorMessage, setErrorMessage] = React.useState("");
+  const [, setToken] = React.useContext(UserContext);
+
+  // POST creates a user and fetches a token
+  const submitRegistration = async () => {
+    const requestOptions = {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        email: registerDetails.email,
+        hashed_password: registerDetails.password,
+      }),
+    };
+
+    const response = await fetch("/api/users", requestOptions);
+    const data = await response.json();
+
+    if (!response.ok) {
+      setErrorMessage(data.detail);
+    } else {
+      setToken(data.access_token);
+      window.location.reload();
+    }
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    submitRegistration();
+  };
+
+  return (
+    <RegisterContainer>
+      <div className="container">
+        <form onSubmit={handleSubmit}>
+          <h2>Register</h2>
+          <label>
+            Email Address
+            <input
+              type="email"
+              name="email"
+              onChange={(e) => {
+                setRegisterDetails((prev) => ({
+                  ...prev,
+                  email: e.target.value,
+                }));
+              }}
+            />
+          </label>
+          <label>
+            Password
+            <input
+              type="password"
+              name="password"
+              onChange={(e) => {
+                setRegisterDetails((prev) => ({
+                  ...prev,
+                  password: e.target.value,
+                }));
+              }}
+            />
+          </label>
+          <label>
+            Confirm Password
+            <input
+              type="password"
+              name="password-confirm"
+              onChange={(e) => {
+                setRegisterDetails((prev) => ({
+                  ...prev,
+                  password_confirm: e.target.value,
+                }));
+              }}
+            />
+          </label>
+          {errorMessage ? <p>{errorMessage}</p> : null}
+          <button
+            className="save"
+            type="submit"
+            disabled={
+              registerDetails.password === registerDetails.password_confirm &&
+              registerDetails.password &&
+              registerDetails.email
+                ? null
+                : "disabled"
+            }
+          >
+            Login
+          </button>
+        </form>
+      </div>
+    </RegisterContainer>
+  );
+};
+
+export default Register;
+
 const RegisterContainer = styled.div`
-  /* width: 50%; */
-  /* height: 50%; */
   padding: 50px 70px;
   background-color: ${colours.mainBlue};
   display: flex;
@@ -46,103 +145,3 @@ const RegisterContainer = styled.div`
     }
   }
 `;
-
-const Register = () => {
-  const [loginDetails, setLoginDetails] = React.useState({});
-  const [errorMessage, setErrorMessage] = React.useState("");
-  const [, setToken] = React.useContext(UserContext);
-
-  const submitRegistration = async () => {
-    const requestOptions = {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        email: loginDetails.email,
-        hashed_password: loginDetails.password,
-      }),
-    };
-
-    const response = await fetch(
-      process.env.SERVER_URL + "/api/users",
-      requestOptions
-    );
-    const data = await response.json();
-
-    if (!response.ok) {
-      setErrorMessage(data.detail);
-    } else {
-      setToken(data.access_token);
-      window.location.reload();
-    }
-  };
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    submitRegistration();
-  };
-
-  return (
-    <RegisterContainer>
-      <div className="container">
-        <form onSubmit={handleSubmit}>
-          <h2>Register</h2>
-          <label>
-            Email Address
-            <input
-              type="email"
-              name="email"
-              onChange={(e) => {
-                setLoginDetails((prev) => ({
-                  ...prev,
-                  email: e.target.value,
-                }));
-              }}
-            />
-          </label>
-          <label>
-            Password
-            <input
-              type="password"
-              name="password"
-              onChange={(e) => {
-                setLoginDetails((prev) => ({
-                  ...prev,
-                  password: e.target.value,
-                }));
-              }}
-            />
-          </label>
-          <label>
-            Confirm Password
-            <input
-              type="password"
-              name="password-confirm"
-              onChange={(e) => {
-                setLoginDetails((prev) => ({
-                  ...prev,
-                  password_confirm: e.target.value,
-                }));
-              }}
-            />
-          </label>
-          {errorMessage ? <p>{errorMessage}</p> : null}
-          <button
-            className="save"
-            type="submit"
-            disabled={
-              loginDetails.password === loginDetails.password_confirm &&
-              loginDetails.password &&
-              loginDetails.email
-                ? null
-                : "disabled"
-            }
-          >
-            Login
-          </button>
-        </form>
-      </div>
-    </RegisterContainer>
-  );
-};
-
-export default Register;

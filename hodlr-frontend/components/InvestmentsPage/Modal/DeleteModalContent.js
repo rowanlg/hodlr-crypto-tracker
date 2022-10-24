@@ -3,30 +3,12 @@ import styled from "styled-components";
 import colours from "../../colours";
 import { UserContext } from "../../../context/UserContext";
 
-const DeleteContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  position: relative;
-  button {
-    margin: 10px 0;
-    background-color: ${colours.darkBlue};
-    border: none;
-    padding: 5px 15px;
-    border-radius: 5px;
-    cursor: pointer;
-  }
-  .confirm-container {
-    /* position: absolute; */
-  }
-`;
-
 const DeleteModalContent = ({ buysData, setDeleteModalShow, listOfCoins }) => {
   const [transactionId, setTransactionId] = React.useState(null);
   const [confirmShow, setConfirmShow] = React.useState(false);
   const [token] = React.useContext(UserContext);
 
+  // Request for deleting transaction by ID and removing that coin amount from coin held data
   function handleSubmitDelete() {
     const deleteOptions = {
       method: "DELETE",
@@ -51,21 +33,14 @@ const DeleteModalContent = ({ buysData, setDeleteModalShow, listOfCoins }) => {
           ].amount - buysData[transactionId].amount,
       }),
     };
-    fetch(
-      process.env.SERVER_URL + `/api/investment/${buysData[transactionId].id}`,
-      deleteOptions
-    )
+    fetch(`/api/investment/${buysData[transactionId].id}`, deleteOptions)
       .then((res) => res.json())
       .then((data) => {
         console.log(data);
       })
       .catch((err) => console.log(err));
 
-    fetch(
-      process.env.SERVER_URL +
-        `/api/coins_held/${buysData[transactionId].name}`,
-      putOptions
-    )
+    fetch(`/api/coins_held/${buysData[transactionId].name}`, putOptions)
       .then((res) => res.json())
       .then((data) => {
         console.log(data);
@@ -74,7 +49,8 @@ const DeleteModalContent = ({ buysData, setDeleteModalShow, listOfCoins }) => {
 
     window.location.reload();
   }
-  // console.log(listOfCoins);
+
+  // All available transactions for deleting
   const transactions = buysData.map((transaction, index) => {
     return (
       <option key={index} value={index}>
@@ -83,7 +59,7 @@ const DeleteModalContent = ({ buysData, setDeleteModalShow, listOfCoins }) => {
       </option>
     );
   });
-  // console.log("data", buysData[transactionId]);
+
   return (
     <DeleteContainer>
       {!confirmShow ? (
@@ -119,3 +95,21 @@ const DeleteModalContent = ({ buysData, setDeleteModalShow, listOfCoins }) => {
 };
 
 export default DeleteModalContent;
+
+const DeleteContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  button {
+    margin: 10px 0;
+    background-color: ${colours.darkBlue};
+    border: none;
+    padding: 5px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  .confirm-container {
+  }
+`;

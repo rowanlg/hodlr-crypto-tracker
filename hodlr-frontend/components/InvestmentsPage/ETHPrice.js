@@ -4,6 +4,8 @@ import SmallWidget from "../SmallWidget";
 const ETHPrice = () => {
   const [ethData, setEthData] = React.useState({});
   const [loading, setLoading] = React.useState(true);
+
+  // Get ETH price from coingecko API
   React.useEffect(() => {
     fetch("https://api.coingecko.com/api/v3/coins/ethereum")
       .then((res) => res.json())
@@ -18,8 +20,10 @@ const ETHPrice = () => {
       .catch((err) => console.log(err));
   }, []);
 
-  const monthChangeCalc =
+  // Calculate daily change from %
+  const dailyChangeCalc =
     ethData.price - ethData.price * (ethData.change24h / 100);
+
   return (
     <>
       {!loading ? (
@@ -27,7 +31,7 @@ const ETHPrice = () => {
           name="ETH Price"
           figure={ethData.price.toLocaleString("en-GB")}
           percentageDiff={ethData.change24h.toLocaleString("en-GB")}
-          lastMonth={monthChangeCalc.toLocaleString("en-GB")}
+          prevPrice={dailyChangeCalc.toFixed(2).toLocaleString("en-GB")}
         />
       ) : null}
     </>

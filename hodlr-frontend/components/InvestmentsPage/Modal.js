@@ -151,6 +151,7 @@ const Modal = ({
   setDeleteModalShow,
   listOfCoins,
   buysData,
+  listOfCoinNames,
 }) => {
   const [token] = React.useContext(UserContext);
 
@@ -194,6 +195,7 @@ const Modal = ({
             listOfCoins={listOfCoins}
             token={token}
             setAddModalShow={setAddModalShow}
+            listOfCoinNames={listOfCoinNames}
           />
         ) : editModalShow ? (
           <EditModalContent
@@ -201,6 +203,7 @@ const Modal = ({
             token={token}
             setEditModalShow={setEditModalShow}
             buysData={buysData}
+            listOfCoinNames={listOfCoinNames}
           />
         ) : (
           <DeleteModalContent

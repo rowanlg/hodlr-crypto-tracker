@@ -7,6 +7,7 @@ const EditModalContent = ({
   listOfCoins,
   setEditModalShow,
   buysData,
+  listOfCoinNames,
 }) => {
   const [editData, setEditData] = React.useState({
     type: "buy",
@@ -19,19 +20,9 @@ const EditModalContent = ({
     found: true,
   });
   const [step, setStep] = React.useState(1);
-  const [coinFound, setCoinFound] = React.useState(false);
   const [transactionId, setTransactionId] = React.useState(null);
-  const [showError, setShowError] = React.useState(false);
-  const [listOfCoinNames, setListOfCoinNames] = React.useState([]);
 
-  React.useEffect(() => {
-    listOfCoins.map((coin) => {
-      setListOfCoinNames((prev) => [...prev, coin.name]);
-    });
-  }, []);
-
-  // console.log(editData);
-
+  // Process data and remove or add amount of coins to coin held data
   function processData() {
     const investmentOptions = {
       method: "PUT",
@@ -72,18 +63,12 @@ const EditModalContent = ({
       }),
     };
 
-    fetch(
-      process.env.SERVER_URL + `/api/investment/${buysData[transactionId].id}`,
-      investmentOptions
-    )
+    fetch(`/api/investment/${buysData[transactionId].id}`, investmentOptions)
       .then((res) => res.json())
       .then((data) => console.log(data))
       .catch((err) => console.log(err));
 
-    fetch(
-      process.env.SERVER_URL + `/api/coins_held/${editData.name}`,
-      coinOptions
-    )
+    fetch(`/api/coins_held/${editData.name}`, coinOptions)
       .then((res) => res.json())
       .then((data) => console.log(data))
       .catch((err) => console.log(err));
@@ -92,7 +77,8 @@ const EditModalContent = ({
   function capitalize(string) {
     return string.charAt(0).toUpperCase() + string.substring(1);
   }
-  // console.log("test", listOfCoins);
+
+  // Progress of edit modal
   const steps = () => {
     const listData = Object.entries(editData).map((item, index) => {
       if (index !== Object.entries(editData).length - 1) {
@@ -107,6 +93,7 @@ const EditModalContent = ({
       }
     });
 
+    // Map all available transactions to edit
     const transactions = buysData.map((transaction, index) => {
       return (
         <option key={index} value={index}>
@@ -116,6 +103,7 @@ const EditModalContent = ({
       );
     });
 
+    // Modal steps
     switch (step) {
       case 1:
         return (

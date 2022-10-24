@@ -2,41 +2,10 @@ import React from "react";
 import styled from "styled-components";
 import colours from "../colours";
 
-const MarketCaps = styled.div`
-  width: 100%;
-  height: 100%;
-  padding: 15px;
-  h4 {
-    margin-bottom: 35px;
-  }
-  table {
-    width: 90%;
-    margin: auto;
-    border-collapse: collapse;
-    background-color: ${colours.darkBlue};
-    /* padding: 15px; */
-    border-radius: 3px;
-    border-style: hidden; /* hide standard table (collapsed) border */
-    box-shadow: 0 0 0 14px ${colours.darkBlue}; /* this draws the table border  */
-    thead {
-      border-bottom: 1px solid ${colours.veryDeactivated};
-      tr {
-        text-align: left;
-        font-size: 0.8rem;
-      }
-    }
-    tbody {
-      td {
-        text-align: left;
-        padding: 4px 0;
-        font-size: 0.8rem;
-      }
-    }
-  }
-`;
-
 const MarketCapPercentages = () => {
   const [marketCapPercentages, setMarketPercentages] = React.useState([]);
+
+  // Fetch market cap percentages of whole market
   React.useEffect(() => {
     fetch("https://api.coingecko.com/api/v3/global", {
       "Content-Type": "application/json",
@@ -49,6 +18,7 @@ const MarketCapPercentages = () => {
       .catch((err) => console.log(err));
   }, []);
 
+  // List market cap percentages in table
   const listMarketCaps = Object.entries(marketCapPercentages).map(
     (item, index) => {
       return (
@@ -69,7 +39,6 @@ const MarketCapPercentages = () => {
     }
   );
 
-  console.log("%", marketCapPercentages);
   return (
     <MarketCaps>
       <h4>Market Caps</h4>
@@ -88,3 +57,35 @@ const MarketCapPercentages = () => {
 };
 
 export default MarketCapPercentages;
+
+const MarketCaps = styled.div`
+  width: 100%;
+  height: 100%;
+  padding: 15px;
+  h4 {
+    margin-bottom: 35px;
+  }
+  table {
+    width: 90%;
+    margin: auto;
+    border-collapse: collapse;
+    background-color: ${colours.darkBlue};
+    border-radius: 3px;
+    border-style: hidden;
+    box-shadow: 0 0 0 14px ${colours.darkBlue};
+    thead {
+      border-bottom: 1px solid ${colours.veryDeactivated};
+      tr {
+        text-align: left;
+        font-size: 0.8rem;
+      }
+    }
+    tbody {
+      td {
+        text-align: left;
+        padding: 4px 0;
+        font-size: 0.8rem;
+      }
+    }
+  }
+`;

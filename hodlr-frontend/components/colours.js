@@ -1,3 +1,4 @@
+// Colour scheme for project
 const colours = {
   mainBlue: "#293547",
   darkBlue: "#1D2634",

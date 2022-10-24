@@ -3,14 +3,12 @@ import styled from "styled-components";
 import colours from "../colours";
 
 const ButtonContainer = styled.div`
-  /* border: 1px solid red; */
   display: flex;
   align-items: center;
   justify-content: flex-end;
   button {
     width: 36px;
     height: 36px;
-    /* padding: 5px; */
     margin-left: 15px;
     border-radius: ${colours.borderRadius};
     background-color: ${colours.mainBlue};
@@ -22,14 +20,8 @@ const ButtonContainer = styled.div`
   }
 `;
 
-const Buttons = ({
-  addModalShow,
-  setAddModalShow,
-  editModalShow,
-  setEditModalShow,
-  deleteModalShow,
-  setDeleteModalShow,
-}) => {
+const Buttons = ({ setAddModalShow, setEditModalShow, setDeleteModalShow }) => {
+  // Buttons for each modal, Add, Edit, Delete
   return (
     <ButtonContainer>
       <button onClick={() => setAddModalShow(true)}>

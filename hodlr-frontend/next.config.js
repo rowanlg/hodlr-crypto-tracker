@@ -8,40 +8,19 @@ const nextConfig = {
   async rewrites() {
     return [
       {
-        source: "/api/users",
-        destination: "https://hodlr-tracker.herokuapp.com/api/users",
-      },
-      {
-        source: "/api/token",
-        destination: "https://hodlr-tracker.herokuapp.com/api/token",
-      },
-      {
-        source: "/api/users/me",
-        destination: "https://hodlr-tracker.herokuapp.com/api/users/me",
-      },
-      {
-        source: "/api/investment",
-        destination: "https://hodlr-tracker.herokuapp.com/api/investment",
-      },
-      {
-        source: "/api/coins_held",
-        destination: "https://hodlr-tracker.herokuapp.com/api/coins_held",
-      },
-      {
-        source: "/api/investments/:slug",
-        destination:
-          "https://hodlr-tracker.herokuapp.com/api/investments/:slug",
-      },
-      {
-        source: "/api/coins_held/:slug",
-        destination: "https://hodlr-tracker.herokuapp.com/api/coins_held/:slug",
-      },
-      {
-        source: "/api/prices",
-        destination: "https://hodlr-tracker.herokuapp.com/api/prices",
+        source: "/api/:slug*",
+        destination: "http://localhost:8000/api/:slug*",
       },
     ];
   },
+  // async rewrites() {
+  //   return [
+  //     {
+  //       source: "/api/:slug*",
+  //       destination: "https://hodlr-tracker.herokuapp.com/api/:slug*",
+  //     },
+  //   ];
+  // },
 };
 
 module.exports = nextConfig;

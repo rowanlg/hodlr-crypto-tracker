@@ -2,7 +2,12 @@ import React from "react";
 import styled from "styled-components";
 import colours from "../../colours";
 
-const AddModalContent = ({ token, listOfCoins, setAddModalShow }) => {
+const AddModalContent = ({
+  token,
+  listOfCoins,
+  setAddModalShow,
+  listOfCoinNames,
+}) => {
   const [addData, setAddData] = React.useState({
     type: "buy",
     name: "",
@@ -14,17 +19,10 @@ const AddModalContent = ({ token, listOfCoins, setAddModalShow }) => {
     found: true,
   });
   const [step, setStep] = React.useState(1);
-  const [coinFound, setCoinFound] = React.useState(false);
   const [showError, setShowError] = React.useState(false);
-  const [listOfCoinNames, setListOfCoinNames] = React.useState([]);
   const [coinOptions, setCoinOptions] = React.useState({});
 
-  React.useEffect(() => {
-    listOfCoins.map((coin) => {
-      setListOfCoinNames((prev) => [...prev, coin.name]);
-    });
-  }, []);
-
+  // When addData is changed, calculate if the coin is already held by user, and if held, PUT request to change coin amount held or POST for new coin
   React.useEffect(() => {
     if (listOfCoinNames.includes(addData.name)) {
       setCoinOptions({
@@ -68,8 +66,7 @@ const AddModalContent = ({ token, listOfCoins, setAddModalShow }) => {
     }
   }, [addData]);
 
-  // console.log(addData);
-
+  // Requests
   function processData() {
     const investmentOptions = {
       method: "POST",
@@ -89,16 +86,15 @@ const AddModalContent = ({ token, listOfCoins, setAddModalShow }) => {
       }),
     };
 
-    fetch(process.env.SERVER_URL + `/api/investment`, investmentOptions)
+    fetch(`/api/investment`, investmentOptions)
       .then((res) => res.json())
       .then((data) => console.log(data))
       .catch((err) => console.log(err));
 
     fetch(
-      process.env.SERVER_URL +
-        `/api/coins_held${
-          listOfCoinNames.includes(addData.name) ? "/" + addData.name : ""
-        }`,
+      `/api/coins_held${
+        listOfCoinNames.includes(addData.name) ? "/" + addData.name : ""
+      }`,
       coinOptions
     )
       .then((res) => res.json())
@@ -106,6 +102,7 @@ const AddModalContent = ({ token, listOfCoins, setAddModalShow }) => {
       .catch((err) => console.log(err));
   }
 
+  // Logic to search coingecko API for coin, if it isnt there then show user a warning, and ask if they want to continue without data
   function handleNameSubmittion() {
     console.log("submitted");
     fetch(
@@ -132,6 +129,7 @@ const AddModalContent = ({ token, listOfCoins, setAddModalShow }) => {
     return string.charAt(0).toUpperCase() + string.substring(1);
   }
 
+  // Progress bar in modal
   const steps = () => {
     const listData = Object.entries(addData).map((item, index) => {
       if (index !== Object.entries(addData).length - 1) {
@@ -146,6 +144,7 @@ const AddModalContent = ({ token, listOfCoins, setAddModalShow }) => {
       }
     });
 
+    // Each step in modal
     switch (step) {
       case 1:
         return (

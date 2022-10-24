@@ -2,11 +2,67 @@ import React from "react";
 import styled from "styled-components";
 import colours from "../colours";
 
+const Trending = () => {
+  const [trendingCoins, setTrendingCoins] = React.useState([]);
+  const [btcPrice, setBtcPrice] = React.useState(0);
+
+  // Fetch top trending coins on coingecko
+  React.useEffect(() => {
+    fetch("https://api.coingecko.com/api/v3/search/trending", {
+      "Content-Type": "application/json",
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        console.log(data);
+        setTrendingCoins(data.coins);
+      })
+      .catch((err) => console.log(err));
+    fetch("https://api.coingecko.com/api/v3/coins/bitcoin")
+      .then((res) => res.json())
+      .then((data) => {
+        console.log(data.market_data.current_price.gbp);
+        setBtcPrice(data.market_data.current_price.gbp);
+      })
+      .catch((err) => console.log(err));
+  }, []);
+
+  // List trending coins up to 5
+  const showTrending = trendingCoins.map((coin, index) => {
+    if (index < 5) {
+      return (
+        <>
+          <div key={coin.item.name} className="coin-row">
+            <p className="score">{coin.item.score + 1 + "."}</p>
+            <img
+              className="thumb"
+              src={coin.item.small}
+              alt={coin.item.name + " thumbnail"}
+            />
+            <p className="rank">MC Rank: {coin.item.market_cap_rank}</p>
+            <p className="name">{coin.item.name}</p>
+            <p className="price">
+              {coin.item.price_btc * btcPrice > 10
+                ? "£" + (coin.item.price_btc * btcPrice).toFixed(2)
+                : "£" + (coin.item.price_btc * btcPrice).toFixed(4)}
+            </p>
+          </div>
+          {index !== 4 ? <div className="line-break" /> : null}
+        </>
+      );
+    }
+  });
+  return (
+    <TrendingContent>
+      <h4>Top 5 Trending Coins</h4>
+      <div className="list">{showTrending}</div>
+    </TrendingContent>
+  );
+};
+
+export default Trending;
+
 const TrendingContent = styled.div`
-  /* border: 1px solid red; */
-  /* height: 100%; */
   .list {
-    /* border: 1px solid green; */
     background-color: ${colours.darkBlue};
     border-radius: ${colours.borderRadius};
     padding: 15px;
@@ -54,59 +110,3 @@ const TrendingContent = styled.div`
     }
   }
 `;
-
-const Trending = () => {
-  const [trendingCoins, setTrendingCoins] = React.useState([]);
-  const [btcPrice, setBtcPrice] = React.useState(0);
-  React.useEffect(() => {
-    fetch("https://api.coingecko.com/api/v3/search/trending", {
-      "Content-Type": "application/json",
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        console.log(data);
-        setTrendingCoins(data.coins);
-      })
-      .catch((err) => console.log(err));
-    fetch("https://api.coingecko.com/api/v3/coins/bitcoin")
-      .then((res) => res.json())
-      .then((data) => {
-        console.log(data.market_data.current_price.gbp);
-        setBtcPrice(data.market_data.current_price.gbp);
-      })
-      .catch((err) => console.log(err));
-  }, []);
-
-  const showTrending = trendingCoins.map((coin, index) => {
-    if (index < 5) {
-      return (
-        <>
-          <div key={coin.item.name} className="coin-row">
-            <p className="score">{coin.item.score + 1 + "."}</p>
-            <img
-              className="thumb"
-              src={coin.item.small}
-              alt={coin.item.name + " thumbnail"}
-            />
-            <p className="rank">MC Rank: {coin.item.market_cap_rank}</p>
-            <p className="name">{coin.item.name}</p>
-            <p className="price">
-              {coin.item.price_btc * btcPrice > 10
-                ? "£" + (coin.item.price_btc * btcPrice).toFixed(2)
-                : "£" + (coin.item.price_btc * btcPrice).toFixed(4)}
-            </p>
-          </div>
-          {index !== 4 ? <div className="line-break" /> : null}
-        </>
-      );
-    }
-  });
-  return (
-    <TrendingContent>
-      <h4>Top 5 Trending Coins</h4>
-      <div className="list">{showTrending}</div>
-    </TrendingContent>
-  );
-};
-
-export default Trending;

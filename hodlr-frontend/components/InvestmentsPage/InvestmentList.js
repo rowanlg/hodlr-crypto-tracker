@@ -1,126 +1,11 @@
 import React from "react";
 import styled from "styled-components";
-import { UserContext } from "../../context/UserContext";
 import colours from "../colours";
-
-const InvestmentListSection = styled.div`
-  background-color: ${colours.mainBlue};
-  border-radius: ${colours.borderRadius};
-  padding: ${colours.padding};
-  grid-row: span 5;
-  grid-column: span 3;
-  overflow-y: scroll;
-
-  .line-break {
-    width: 100%;
-    height: 2px;
-    border-radius: 1px;
-    background-color: ${colours.deactivatedWhite};
-  }
-  table {
-    border-collapse: collapse;
-    width: 100%;
-    tr {
-      height: 50px;
-    }
-    tbody {
-      tr {
-        border-bottom: 1px solid ${colours.veryDeactivated};
-        td {
-          font-size: 0.8rem;
-        }
-      }
-    }
-    thead {
-      border-bottom: 1px solid ${colours.veryDeactivated};
-      tr {
-        th {
-          text-align: left;
-          font-size: 0.9rem;
-          svg {
-            margin-left: 3px;
-            /* margin-bottom: 1px; */
-            cursor: pointer;
-            width: 11px;
-          }
-        }
-      }
-    }
-  }
-`;
 
 const InvestmentList = ({ buysData, loading, listOfCoinPrices }) => {
   const [dateSortReversed, setDateSortReversed] = React.useState(false);
-  // const [token] = React.useContext(UserContext);
 
-  // const listBuys = buysData
-  //   .sort((a, b) => {
-  //     return dateSortReversed
-  //       ? a.datetime < b.datetime
-  //         ? -1
-  //         : a.datetime > b.datetime
-  //         ? 1
-  //         : 0
-  //       : b.datetime < a.datetime
-  //       ? -1
-  //       : b.datetime > a.datetime
-  //       ? 1
-  //       : 0;
-  //   })
-  //   .map((buy, index) => {
-  //     const localeOptions = {
-  //       minimumFractionDigits: 2,
-  //       maximumFractionDigits: 2,
-  //     };
-  //     // const price_bought_for = buy.price_bought_for * buy.amount;
-  //     // const price_current =
-  //     // listOfCoinPrices[buy.name.toLowerCase()]?.gbp * buy.amount;
-  //     // console.log(listOfCoinPrices);
-  //     return (
-  //       <tr key={index}>
-  //         <td>{buy.datetime.slice(0, 10)}</td>
-  //         <td style={{ fontWeight: 500 }}>{buy.name}</td>
-  //         <td>{buy.ticker}</td>
-  //         <td>{buy.amount}</td>
-  //         <td>{buy.location}</td>
-  //         <td style={{ color: colours.orange }}>
-  //           {/* £{price_bought_for.toLocaleString("en-GB", localeOptions)} */}
-  //         </td>
-  //         <td
-  //         // style={{
-  //         //   color:
-  //         //     price_bought_for > price_current ? colours.red : colours.green,
-  //         // }}
-  //         >
-  //           {/* £{price_current.toLocaleString("en-GB", localeOptions)} */}
-  //         </td>
-  //       </tr>
-  //     );
-  //   });
-
-  // console.log(buysData);
-  // console.log(
-  //   "sorted",
-  //   buysData
-  //     .sort((a, b) => {
-  //       // return dateSortReversed
-  //       //   ? a.datetime < b.datetime
-  //       //     ? -1
-  //       //     : a.datetime > b.datetime
-  //       //     ? 1
-  //       //     : 0
-  //       //   : b.datetime < a.datetime
-  //       //   ? -1
-  //       //   : b.datetime > a.datetime
-  //       //   ? 1
-  //       //   : 0;
-  //       a.datetime < b.datetime ? -1 : a.datetime > b.datetime ? 1 : 0;
-  //     })
-  //     .map((item) => {
-  //       return item.type;
-  //     })
-  // );
-
+  // List all buy transactions
   const listBuys = buysData
     .filter((obj) => obj.type == "buy")
     .map((item, index) => {
@@ -211,3 +96,49 @@ const InvestmentList = ({ buysData, loading, listOfCoinPrices }) => {
 };
 
 export default InvestmentList;
+
+const InvestmentListSection = styled.div`
+  background-color: ${colours.mainBlue};
+  border-radius: ${colours.borderRadius};
+  padding: ${colours.padding};
+  grid-row: span 5;
+  grid-column: span 3;
+  overflow-y: scroll;
+
+  .line-break {
+    width: 100%;
+    height: 2px;
+    border-radius: 1px;
+    background-color: ${colours.deactivatedWhite};
+  }
+  table {
+    border-collapse: collapse;
+    width: 100%;
+    tr {
+      height: 50px;
+    }
+    tbody {
+      tr {
+        border-bottom: 1px solid ${colours.veryDeactivated};
+        td {
+          font-size: 0.8rem;
+        }
+      }
+    }
+    thead {
+      border-bottom: 1px solid ${colours.veryDeactivated};
+      tr {
+        th {
+          text-align: left;
+          font-size: 0.9rem;
+          svg {
+            margin-left: 3px;
+            /* margin-bottom: 1px; */
+            cursor: pointer;
+            width: 11px;
+          }
+        }
+      }
+    }
+  }
+`;

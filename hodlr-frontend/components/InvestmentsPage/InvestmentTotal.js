@@ -1,10 +1,6 @@
 import React from "react";
 import SmallWidget from "../SmallWidget";
 
-// item.amount *
-//         listOfCoinPrices[item.name.toLowerCase()].gbp *
-//         (listOfCoinPrices[item.name.toLowerCase()].gbp_24h_change / 100);
-
 const InvestmentTotal = ({ listOfCoins, listOfCoinPrices, buysData }) => {
   const getBuysTotal = () => {
     let counter = 0;
@@ -35,17 +31,13 @@ const InvestmentTotal = ({ listOfCoins, listOfCoinPrices, buysData }) => {
       previous24hr: Number(previousTotal.toFixed(2)),
     };
   };
-  // console.log("skjslkjshlksjhs ", listOfCoinPrices);
-
-  // const lastMonth = getBuysTotal().previous24hr;
-  // console.log("lastmonth: ", getBuysTotal().previous24hr);
 
   return (
     <SmallWidget
       name="Investments"
       figure={getBuysTotal().total.toLocaleString("en-GB")}
       percentageDiff={getBuysTotal().percent.toLocaleString("en-GB")}
-      lastMonth={getBuysTotal().previous24hr.toLocaleString("en-GB")}
+      prevPrice={getBuysTotal().previous24hr.toLocaleString("en-GB")}
     />
   );
 };
